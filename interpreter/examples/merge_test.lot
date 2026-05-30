@@ -1,0 +1,28 @@
+LOM v1.0
+# merge_test.lot — demonstrates m:m merge protocol
+# Both paths carry identical payloads — merge succeeds trivially.
+
+[y:y]
+DATA: U3RyZWFtIGFwcHJvYWNoaW5nIG1lcmdlIHBvaW50Lg==
+CRC: db9fa26f
+
+[h:b]
+DATA: U2lkZWNhciBhcHByb2FjaGluZyBmcm9tIHRoZSBvdGhlciBzaWRlLg==
+CRC: 4ed98568
+
+FORK:
+  PATH y:y:
+    DATA: Q29tbW9uIHByZWZpeCBkYXRhIHNoYXJlZCBieSBib3RoIHN0cmVhbXMu
+    CRC: d1804a7a
+
+  PATH h:b:
+    DATA: Q29tbW9uIHByZWZpeCBkYXRhIHNoYXJlZCBieSBib3RoIHN0cmVhbXMu
+    CRC: d1804a7a
+
+ENDFORK
+
+[m:y]
+DATA: TWVyZ2Ugc3VjY2VlZGVkLiBPbmUgc3RyZWFtIHlpZWxkZWQu
+CRC: 3ac95bf1
+
+[e:d]

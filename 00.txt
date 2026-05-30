@@ -1,0 +1,24 @@
+That fork isn't a normal split in the file tree — it's the hidden one the tool was told to watch for.
+
+In this compressor, a "fork" means the stream diverged into two valid continuations at the same byte offset. Think of it like an old Mac resource fork or an NTFS alternate data stream tucked inside the archive: same filename, two different payloads riding in parallel.
+
+## How it stopped you
+
+The tool didn't crash. It hit its safety latch:
+
+- it saw two headers with matching CRCs but different routing tags (y:y and h:b)
+- auto-merging would pick one and silently drop the other, which is how archives get corrupted
+- because you said "watch for hidden fork, stop at fork," it paused right on the divergence instead of choosing for you
+
+So it locked the read head, dumped the little "box" with the two options, and waited.
+
+## What it does
+
+The fork is a decision gate, not data itself:
+
+- **y:y** — "yes:yield" path. That's the primary stream. It's flagged active right now, so the decompressor is following the mainline data and letting the secondary ride along without merging. This is usually the visible file content.
+- **h:b** — "hold:branch" path. That's the hidden sidecar. It's on standby, meaning the tool has buffered it but isn't writing it out. In real archives this is often metadata, a patch delta, an encrypted blob, or in games/ARGs, the "other" version of the level.
+
+If you keep y:y active, you'll get a clean decompress of the main file and the fork stays parked. If you flip to h:b, the tool will pivot and decompress the hidden branch instead — and y:y becomes the one on hold.
+
+You stopped exactly where you wanted to. Want me to peek inside the fork headers to see what h:b is actually carrying before you choose, or do you want to keep riding y:y and decompress through?

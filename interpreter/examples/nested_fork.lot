@@ -1,0 +1,35 @@
+LOM v1.0
+# nested_fork.lot — fork within a fork (b:b pattern)
+# Demonstrates fork stack depth and nested path resolution.
+
+[y:y]
+DATA: T3V0ZXIgc3RyZWFtIGJlZ2lucy4gQWxsIGlzIG5vcm1hbC4=
+CRC: d15c2a1d
+
+FORK:
+  PATH y:y:
+    DATA: T3V0ZXIgeS55IHBhdGguIFRoaXMgaXMgdGhlIG91dGVyIHByaW1hcnkgY29udGludWF0aW9uLg==
+    CRC: ca7ac8b3
+
+    FORK:
+      PATH y:y:
+        DATA: SW5uZXIgeS55IHBhdGguIERlZXBlc3QgbGF5ZXIuIE1haW5saW5lIHRocm91Z2hib3V0Lg==
+        CRC: fb702c1a
+
+      PATH h:b:
+        DATA: SW5uZXIgaDpiIHBhdGguIE5lc3RlZCBzaWRlY2FyLiBBbiBhcmNoaXZlIHdpdGhpbiBhbiBhcmNoaXZlLg==
+        CRC: c018cdc3
+
+    ENDFORK
+
+  PATH h:b:
+    DATA: T3V0ZXIgaDpiIHBhdGguIFRoZSBhbHRlcm5hdGUgdW5pdmVyc2Ugb2YgdGhpcyBzdHJlYW0uIE5vIGlubmVyIGZvcmsgaGVyZS4=
+    CRC: cfa7dd3a
+
+ENDFORK
+
+[y:y]
+DATA: U3RyZWFtIHJlc3VtZXMgYWZ0ZXIgYWxsIGZvcmtzIHJlc29sdmVkLg==
+CRC: 1e543a3e
+
+[e:t]

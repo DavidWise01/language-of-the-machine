@@ -1,0 +1,34 @@
+LOM v1.0
+# simple_fork.lot — the canonical fork from 00.txt
+# Two valid continuations at the same byte offset.
+# y:y is the primary stream. h:b is the hidden sidecar.
+
+[y:y]
+DATA: VGhpcyBpcyB0aGUgcHJpbWFyeSBzdHJlYW0uIEl0IGlzIHRoZSB2aXNpYmxlIGZpbGUgY29udGVudC4=
+CRC: 48daba17
+
+[y:y]
+DATA: IFRoZSByZWFkIGhlYWQgaXMgYWR2YW5jaW5nIGFsb25nIHRoZSBtYWlubGluZS4=
+CRC: bea9d8be
+
+# The fork point — reader locks here.
+# Both headers share a valid structure.
+# y:y routes: continuation of the main document
+# h:b routes: hidden metadata sidecar
+
+FORK:
+  PATH y:y:
+    DATA: VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4gVGhpcyBpcyB0aGUgbWFpbiBkb2N1bWVudCBjb250aW51YXRpb24uIE5vdGhpbmcgaGlkZGVuIGhlcmUu
+    CRC: 628e1b76
+
+  PATH h:b:
+    DATA: W0hJRERFTl0gVGhpcyBpcyB0aGUgc2lkZWNhciBzdHJlYW0uIEl0IHdhcyByaWRpbmcgaW4gcGFyYWxsZWwgdGhlIHdob2xlIHRpbWUuIE9ubHkgeW91IGNhbiBzZWUgdGhpcyBpZiB5b3UgY2hvb3NlIGg6Yi4=
+    CRC: e99dceaf
+
+ENDFORK
+
+[y:y]
+DATA: IEFmdGVyIHRoZSBmb3JrIHJlc29sdmVzLCB0aGUgc3RyZWFtIGNvbnRpbnVlcy4=
+CRC: a12df98a
+
+[e:t]
