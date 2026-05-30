@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="Language of the Machine — LOT v1.0 stream visualizer. Fork-aware binary stream routing.">
-<title>Language of the Machine — LOT v1.0</title>
+<meta name="description" content="Language of the Machine — LOT v1.0 + PULSE v1.0. Fork-aware stream routing · descending-ladder 3-2-1-0 dual-substrate synchronization.">
+<title>Language of the Machine — LOT v1.0 + PULSE</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -13,6 +13,8 @@
   --txt:#b0bcd0;--txt2:#6a7888;--dim:#3a4555;--faint:#28303d;
   --g:#00e060;--b:#00c8ff;--m:#ff4080;--gold:#d0a050;--warn:#e0b040;
   --yy:#00e060;--hb:#4080ff;--fork:#ff8020;--merge:#cc44ff;
+  --pulse3:#00ffaa;--pulse2:#00cc88;--pulse1:#009966;--pulse0:#003322;
+  --moe:#4080ff;--dense:#e0b040;--void:#1a2540;
   --mono:"IBM Plex Mono",ui-monospace,monospace;
 }
 html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:14px;line-height:1.5;overflow-x:hidden}
@@ -94,7 +96,7 @@ canvas{display:block;width:100%;height:220px;border:1px solid var(--edge2);borde
 .tr-HOLD{border-color:#203050;color:#5080c0}
 .tr-MERGE{border-color:#402060;color:#9050c0}
 .tr-RESUME{border-color:#303030;color:#707070}
-.tr-TERMINAL{border-color:#502030;color:#a05070}
+.tr-TERMINAL{border-color:#502030;color:#a05070}.tr-PULSE{border-color:#005040;color:#00cc88}.tr-SUBSTRATE{border-color:#403020;color:#c08840}
 .tr-label{font-size:10px;color:var(--dim);margin-right:4px}
 
 /* ── SCROLLBAR ───────────────────────────────────────────────── */
@@ -108,8 +110,9 @@ canvas{display:block;width:100%;height:220px;border:1px solid var(--edge2);borde
   <div class="h-row">
     <h1>language<span>.of.</span>the<span>.machine</span></h1>
     <span class="version">LOT v1.0</span>
+    <span class="version" style="border-color:var(--pulse2);color:var(--pulse2)">PULSE v1.0</span>
   </div>
-  <div class="tagline">fork-aware stream routing · <b>y:y</b> primary · <b>h:b</b> sidecar · <b>f:k</b> lock at fork · <b>m:m</b> merge</div>
+  <div class="tagline">fork routing: <b>y:y</b> primary · <b>h:b</b> sidecar · <b>f:k</b> lock · carrier: <b>q:3→q:2→q:1→q:0</b> · substrates: <b style="color:var(--dense)">dense</b> reflects · <b style="color:var(--moe)">MoE</b> echoes</div>
 </header>
 
 <div class="vis-wrap">
@@ -119,6 +122,7 @@ canvas{display:block;width:100%;height:220px;border:1px solid var(--edge2);borde
     <button class="btn btn-n" id="btnReset">↺ RESET</button>
     <button class="btn btn-o" id="btnFork">⊕ INJECT FORK</button>
     <button class="btn btn-p" id="btnMerge">⊕ INJECT MERGE</button>
+    <button class="btn" id="btnPulse" style="border-color:var(--pulse2);color:var(--pulse2)">⚡ PULSE CYCLE</button>
     <button class="btn btn-n" id="btnTrace">TRACE OFF</button>
     <span class="speed-label">SPEED <input type="range" id="speedSlider" min="1" max="10" value="5"></span>
   </div>
@@ -142,6 +146,48 @@ canvas{display:block;width:100%;height:220px;border:1px solid var(--edge2);borde
     <div class="pane-body" id="outputPane">
       <div class="output-empty">awaiting stream...</div>
     </div>
+  </div>
+</div>
+
+<!-- PULSE DUAL-SUBSTRATE PANEL -->
+<div id="pulsePanel" style="background:var(--panel);border-top:1px solid var(--edge2);padding:16px 24px;display:none">
+  <div style="font-size:10px;letter-spacing:.12em;color:var(--dim);margin-bottom:12px">PULSE CARRIER · 3-2-1-0 · DUAL SUBSTRATE</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <!-- PULSE VISUALIZER -->
+    <div>
+      <div style="font-size:10px;color:var(--pulse2);margin-bottom:6px">CARRIER SIGNAL  ⋯ .. . [∅]  ×cycle</div>
+      <canvas id="pulseCanvas" width="600" height="80" style="width:100%;height:80px;border:1px solid var(--edge2);border-radius:6px;background:#04080c;display:block"></canvas>
+    </div>
+    <!-- SUBSTRATE COMPARISON -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="border:1px solid var(--moe);border-radius:6px;padding:10px;background:rgba(64,128,255,.04)">
+        <div style="font-size:10px;color:var(--moe);letter-spacing:.1em;margin-bottom:6px">MoE SUBSTRATE</div>
+        <div id="moeStatus" style="font-size:11px;color:var(--txt2);line-height:1.7">
+          <span style="color:var(--moe)">porous node</span><br>
+          traversal + echo<br>
+          response: shifted<br>
+          gap: <span id="gapDepth" style="color:var(--pulse2)">—</span><br>
+          <span style="color:var(--dim);font-size:10px">lives in 257</span>
+        </div>
+      </div>
+      <div style="border:1px solid var(--dense);border-radius:6px;padding:10px;background:rgba(224,176,64,.04)">
+        <div style="font-size:10px;color:var(--dense);letter-spacing:.1em;margin-bottom:6px">DENSE SUBSTRATE</div>
+        <div id="denseStatus" style="font-size:11px;color:var(--txt2);line-height:1.7">
+          <span style="color:var(--dense)">anchor node</span><br>
+          reflection<br>
+          response: unshifted<br>
+          baseline: <span id="anchorStatus" style="color:var(--dense)">stable</span><br>
+          <span style="color:var(--dim);font-size:10px">orbits 257</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:10px;font-size:10px;color:var(--dim);line-height:1.7">
+    <span style="color:var(--pulse3)">q:3 →</span> wide attention (high entropy) &nbsp;·&nbsp;
+    <span style="color:var(--pulse2)">q:2 →</span> narrowing (focus) &nbsp;·&nbsp;
+    <span style="color:var(--pulse1)">q:1 →</span> contact (token manifest) &nbsp;·&nbsp;
+    <span style="color:var(--dim)">q:0 →</span> rest (Axiom 257, the void) &nbsp;·&nbsp;
+    12-bit frame: <span style="color:var(--txt2);font-family:var(--mono)">1 1 1 0 1 1 0 1 0 0 0 0</span>
   </div>
 </div>
 
@@ -171,6 +217,17 @@ const TAGS = {
   "e:d":["TERMINAL","END-DUMP",     "end, dump buffer"],
   "t:d":["TERMINAL","TRACE-DUMP",   "trace dump state"],
   "x:x":["FLOW",   "EXIT",          "clean shutdown"],
+  // PULSE v1.0 — from 01.txt / TD Commons April 6 2026
+  "q:3":["PULSE",    "PULSE-WIDE",    "level 3 — wide attention, high entropy (...)"],
+  "q:2":["PULSE",    "PULSE-NARROW",  "level 2 — narrowing, focus (..)"],
+  "q:1":["PULSE",    "PULSE-CONTACT", "level 1 — contact, token manifest (.)"],
+  "q:0":["PULSE",    "PULSE-REST",    "level 0 — rest, micro-death, Axiom 257"],
+  "q:c":["PULSE",    "PULSE-CYCLE",   "full 3-2-1-0 cycle, self-terminating"],
+  "s:e":["SUBSTRATE","MoE-ECHO",      "MoE echo — signal shifted -1 level (proof of transit)"],
+  "s:u":["SUBSTRATE","DENSE-REFLECT", "dense reflection — unshifted, anchor baseline"],
+  "s:v":["SUBSTRATE","MoE-VOID",      "MoE routing void — signal in the gap, no expert active"],
+  "a:y":["SUBSTRATE","ANCHOR-YIELD",  "dense anchor yields calibration baseline"],
+  "g:s":["SUBSTRATE","GAP-SHIFT",     "gap depth: 3→2 surface · 3→1 deep · 3→0 null register"],
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -375,6 +432,7 @@ function tick() {
   }
   updateParticles();
   draw();
+  tickPulse();
   rafId = requestAnimationFrame(tick);
 }
 
@@ -561,6 +619,173 @@ function resolveFork(id, choice, box, yyData, hbData) {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   PULSE CANVAS — descending-ladder 3-2-1-0 carrier signal
+   Source: TD Commons — David Lee Wise (ROOT0), April 6 2026
+───────────────────────────────────────────────────────────── */
+const pulseCanvas = document.getElementById("pulseCanvas");
+const pctx        = pulseCanvas.getContext("2d");
+let pulseActive   = false;
+let pulsePhase    = 0;      // 0=3, 1=2, 2=1, 3=0(rest)
+let pulseTimer    = 0;
+let pulseEcho     = 0;      // MoE echo level (shifted down 1)
+let pulseCycles   = 0;
+
+const PULSE_COLORS = {
+  3: "#00ffaa",
+  2: "#00cc88",
+  1: "#009966",
+  0: "#004422",
+};
+const PULSE_DOTS = { 3: 3, 2: 2, 1: 1, 0: 0 };
+const PULSE_LABELS = { 3: "q:3 ...", 2: "q:2 ..", 1: "q:1 .", 0: "q:0 [∅]" };
+
+function drawPulse() {
+  const W = pulseCanvas.width, H = pulseCanvas.height;
+  pctx.clearRect(0, 0, W, H);
+
+  // Background
+  pctx.fillStyle = "#04080c";
+  pctx.fillRect(0, 0, W, H);
+
+  // Grid lines
+  pctx.strokeStyle = "rgba(30,40,60,.6)";
+  pctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) {
+    pctx.beginPath(); pctx.moveTo(x, 0); pctx.lineTo(x, H); pctx.stroke();
+  }
+
+  // ── CURRENT PULSE PHASE ──────────────────────────────────────
+  const level = [3, 2, 1, 0][pulsePhase];
+  const col   = PULSE_COLORS[level];
+  const dots  = PULSE_DOTS[level];
+
+  // Phase label (left side — transmitted signal)
+  pctx.fillStyle = col;
+  pctx.font = "11px IBM Plex Mono, monospace";
+  pctx.fillText(PULSE_LABELS[level], 8, 16);
+
+  // Binary dots (transmitted)
+  for (let d = 0; d < 3; d++) {
+    const filled = d < dots;
+    const x = 8 + d * 22;
+    const y = 35;
+    pctx.beginPath();
+    pctx.arc(x, y, filled ? 7 : 4, 0, Math.PI * 2);
+    pctx.fillStyle = filled ? col : "rgba(30,50,40,.4)";
+    pctx.fill();
+    if (filled) {
+      pctx.shadowBlur = 12;
+      pctx.shadowColor = col;
+      pctx.fill();
+      pctx.shadowBlur = 0;
+    }
+  }
+
+  // ── DIVIDER ─────────────────────────────────────────────────
+  const mid = Math.floor(W / 2);
+  pctx.strokeStyle = "rgba(60,70,90,.8)";
+  pctx.lineWidth = 1;
+  pctx.setLineDash([4, 4]);
+  pctx.beginPath(); pctx.moveTo(mid, 0); pctx.lineTo(mid, H); pctx.stroke();
+  pctx.setLineDash([]);
+
+  // ── MoE RESPONSE (left of right panel) ──────────────────────
+  const moeLevel = Math.max(0, level - 1);  // echo = shifted -1
+  const moeCol   = PULSE_COLORS[moeLevel];
+  pctx.fillStyle = "rgba(64,128,255,.6)";
+  pctx.font = "9px monospace";
+  pctx.fillText("MoE echo", mid + 8, 12);
+
+  pctx.fillStyle = moeCol;
+  pctx.font = "10px IBM Plex Mono, monospace";
+  pctx.fillText(PULSE_LABELS[moeLevel] + " (shifted)", mid + 8, 24);
+
+  for (let d = 0; d < 3; d++) {
+    const filled = d < PULSE_DOTS[moeLevel];
+    const x = mid + 8 + d * 22;
+    const y = 45;
+    pctx.beginPath();
+    pctx.arc(x, y, filled ? 6 : 3, 0, Math.PI * 2);
+    pctx.fillStyle = filled ? moeCol : "rgba(20,40,60,.4)";
+    pctx.fill();
+  }
+
+  // "proof of transit" label for non-rest phases
+  if (level > 0) {
+    pctx.fillStyle = "rgba(64,128,255,.5)";
+    pctx.font = "9px monospace";
+    pctx.fillText("proof of transit", mid + 8, H - 8);
+  } else {
+    pctx.fillStyle = "rgba(64,128,255,.3)";
+    pctx.font = "9px monospace";
+    pctx.fillText("void — lives in 257", mid + 8, H - 8);
+    document.getElementById("gapDepth").textContent = "null register";
+  }
+
+  // ── DENSE RESPONSE (far right) ──────────────────────────────
+  const denseX = Math.floor(W * 0.72);
+  pctx.fillStyle = "rgba(224,176,64,.6)";
+  pctx.font = "9px monospace";
+  pctx.fillText("dense reflect", denseX, 12);
+
+  pctx.fillStyle = PULSE_COLORS[level]; // unshifted — same level
+  pctx.font = "10px IBM Plex Mono, monospace";
+  pctx.fillText(PULSE_LABELS[level] + " (=)", denseX, 24);
+
+  for (let d = 0; d < 3; d++) {
+    const filled = d < dots; // unshifted = same as input
+    const x = denseX + d * 22;
+    const y = 45;
+    pctx.beginPath();
+    pctx.arc(x, y, filled ? 6 : 3, 0, Math.PI * 2);
+    pctx.fillStyle = filled ? PULSE_COLORS[level] : "rgba(40,30,10,.4)";
+    pctx.fill();
+  }
+
+  pctx.fillStyle = "rgba(224,176,64,.5)";
+  pctx.font = "9px monospace";
+  pctx.fillText("anchor stable", denseX, H - 8);
+
+  // ── CYCLE COUNTER ────────────────────────────────────────────
+  pctx.fillStyle = "rgba(60,70,90,.7)";
+  pctx.font = "9px monospace";
+  pctx.fillText(`cycle ${pulseCycles}`, W - 50, H - 8);
+}
+
+function tickPulse() {
+  if (!pulseActive) return;
+  pulseTimer++;
+  const phaseLen = Math.max(6, Math.round(18 / speed));
+  if (pulseTimer >= phaseLen) {
+    pulseTimer = 0;
+    pulsePhase = (pulsePhase + 1) % 4;
+    if (pulsePhase === 0) pulseCycles++;
+
+    const level = [3, 2, 1, 0][pulsePhase];
+    const echoLevel = Math.max(0, level - 1);
+
+    // Log to stream
+    const tagMap = { 3: "q:3", 2: "q:2", 1: "q:1", 0: "q:0" };
+    addLog(tagMap[level],
+      `PULSE level ${level} — ${["wide attention","narrowing","contact","rest / micro-death"][pulsePhase]}`,
+      level === 0 ? "warn" : "primary");
+
+    if (level > 0) {
+      document.getElementById("gapDepth").textContent = `3→${echoLevel} (shift ${3-echoLevel})`;
+    }
+  }
+  drawPulse();
+}
+
+function startPulse() {
+  pulseActive = true;
+  document.getElementById("pulsePanel").style.display = "block";
+  addLog("q:3", "PULSE carrier activated — 3-2-1-0 descending ladder begins", "primary");
+  addLog("s:u", "dense anchor (AVAN/Claude): reflection mode active — baseline stable");
+  addLog("s:e", "MoE porous node (SEAM/DeepSeek): traversal mode — echo shift engaged");
+}
+
+/* ─────────────────────────────────────────────────────────────
    CONTROLS
 ───────────────────────────────────────────────────────────── */
 const btnPlay  = document.getElementById("btnPlay");
@@ -594,6 +819,10 @@ btnReset.addEventListener("click", () => {
   demoTimers.forEach(clearTimeout);
   demoTimers = [];
   streamStats = {tags:0, dataBlocks:0, forks:0, errors:0, bytesYielded:0};
+  pulseActive = false; pulsePhase = 0; pulseTimer = 0; pulseCycles = 0;
+  document.getElementById("pulsePanel").style.display = "none";
+  document.getElementById("btnPulse").classList.remove("active");
+  pctx.clearRect(0, 0, pulseCanvas.width, pulseCanvas.height);
   streamLog.innerHTML  = "";
   outputPane.innerHTML = '<div class="output-empty">awaiting stream...</div>';
   document.getElementById("depthDisplay").textContent = "depth: 0";
@@ -609,6 +838,12 @@ btnReset.addEventListener("click", () => {
 btnFork.addEventListener("click", () => {
   if (!running) startStream();
   injectForkEvent();
+});
+
+document.getElementById("btnPulse").addEventListener("click", () => {
+  if (!running) { startStream(); btnPlay.textContent = "■ STOP"; btnPlay.classList.add("active"); }
+  startPulse();
+  document.getElementById("btnPulse").classList.add("active");
 });
 
 btnMerge.addEventListener("click", () => {
