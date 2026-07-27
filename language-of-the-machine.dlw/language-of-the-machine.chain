@@ -1,9 +1,9 @@
 ROOT0-DLW-CHAIN-v1
 index : 1332
 slug  : language-of-the-machine
-seal  : e611d4388a6855bea2403b3560076e7494b4cf2c327102e83a87c4f09c8f49ce
-prev  : 6a2f384f4cceba79779bd22f2b75bf7d908161b67397c5bc49201696a4fd3f9f
-link  : e31889d6bcfeef0d8f200150e1032462d47929c30481e8131a2521f02edb2c3d
-head  : 41f029ee4eaa0042c67040dc5927434f8e8446341839c86b6a09d79c5fbf30da
+seal  : bdf92e535ce538414ee8e75e8abbf92a7a6d4e362c238540ce79d7ec0ee20da9
+prev  : 832a6abbece7ad392da8a6a46661eee444f9b986385ef1f1aa42ae74baba125b
+link  : 94e0bd3f7ab1799f6271374217b17f620db292eda84502c69bc983957e02ad73
+head  : c4d41afeaef76470528856d54d86cf480a0e1c2fc8ebc60fbb9eb8e442585f2b
 
 — the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
